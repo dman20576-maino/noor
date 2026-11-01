@@ -1,11 +1,11 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f5132"><title>نور</title>
+<meta name="theme-color" content="#0f5132"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><title>نور</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Scheherazade+New&family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#fbf8f1;--fg:#222;--c:#0f5132;--card:#fff;--b:#e4dccb}
 .night{--bg:#121212;--fg:#e8e8e8;--card:#1d1d1d;--b:#333;--c:#5fc79a}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:'Noto Naskh Arabic',sans-serif;padding-bottom:70px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:'Noto Naskh Arabic',sans-serif;padding-bottom:20px}
 header{background:var(--h,#0f5132) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M20 4l4 12 12 4-12 4-4 12-4-12-12-4 12-4z' fill='none' stroke='%23ffffff' stroke-opacity='.2'/%3E%3C/svg%3E");color:#fff;padding:12px;font-size:22px;text-align:center;border-bottom:3px solid var(--g,#c9a227);position:sticky;top:0;z-index:5}
 .ban{background:var(--g);color:#000;padding:10px;text-align:center;font-size:14px}.mus{border:3px double var(--g)}.card{border-top:2px solid var(--g)}
 main{padding:12px;max-width:760px;margin:auto}
@@ -18,15 +18,24 @@ button.b{background:var(--c);color:#fff;border:0}input,textarea{width:100%;margi
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .ay{line-height:2.4;text-align:justify}.ay span{cursor:pointer;padding:2px}.ay span.cur{background:#ffe08a55}
 .n{color:var(--c);font-size:.7em}.bar{height:8px;background:var(--b);border-radius:4px}.bar i{display:block;height:100%;background:var(--c);border-radius:4px}
-.sheet{position:fixed;bottom:56px;left:0;right:0;background:var(--card);border-top:2px solid var(--c);padding:12px;max-height:55vh;overflow:auto;z-index:9}
+.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:2px solid var(--c);padding:12px;max-height:55vh;overflow:auto;z-index:9}
 .li{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--b)}small{opacity:.7}
+#mb{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:#ffffff26;color:#fff;border:1px solid #fff9;border-radius:8px;padding:6px 10px;font:inherit;font-size:14px}
+.ov{position:fixed;inset:0;background:#0007;z-index:20}.dw{position:fixed;top:0;bottom:0;right:0;width:75%;max-width:300px;background:var(--card);z-index:21;padding:16px;overflow:auto;border-left:3px solid var(--g)}
+.dw .li{font-size:18px;justify-content:flex-start;gap:10px}
+.pg{background:var(--card);color:var(--fg);border:4px double var(--g);border-radius:6px;padding:10px 12px;box-shadow:0 0 0 2px var(--c) inset}
+.ph{display:flex;justify-content:space-between;border-bottom:1px solid var(--g);padding-bottom:4px;font-size:.55em;color:var(--c)}
+.sb{margin:12px 0 6px;padding:6px;text-align:center;border:2px solid var(--g);border-radius:8px;background:linear-gradient(90deg,transparent,#c9a22733,transparent);color:var(--c);font-size:1.15em}
+.bs{text-align:center;margin-bottom:4px}.mp{line-height:2.3;text-align:justify;text-align-last:center}
+.am{display:inline-block;min-width:1.7em;height:1.7em;line-height:1.6em;text-align:center;border:1.5px solid var(--g);border-radius:50%;font-size:.5em;color:var(--c);vertical-align:middle;font-weight:normal}
+.pn{text-align:center;border-top:1px solid var(--g);margin-top:6px;padding-top:4px;font-size:.6em;color:var(--c)}
 </style></head><body>
-<header id="t">✦ نور ✦</header><div id="ban"></div><main id="m">جارٍ التحميل…</main><div id="sh"></div>
-<nav id="nav"></nav>
+<header id="t"><button id="mb" onclick="menu()">☰ القائمة</button><span id="ttl">✦ نور ✦</span></header><div id="ban"></div><main id="m">جارٍ التحميل…</main><div id="sh"></div>
+<div id="dr"></div>
 <script>
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const API='https://api.alquran.cloud/v1',TOTAL=6236;
-let St={kh:[],act:0,bm:[],wird:[],rec:'ar.alafasy',taf:'ar.muyassar',font:'Amiri Quran',size:26,night:0,cnt:{},goals:[],log:[],nt:{},theme:'أخضر'};
+let St={kh:[],act:0,bm:[],wird:[],rec:'ar.alafasy',taf:'ar.muyassar',font:'Amiri Quran',size:26,night:0,cnt:{},goals:[],log:[],nt:{},theme:'أخضر',tdl:{},pt:null};
 try{Object.assign(St,JSON.parse(localStorage.st||'{}'))}catch(e){}
 const save=()=>{try{localStorage.st=JSON.stringify(St)}catch(e){}};
 let A=[],SU=[],tab='quran',cur=-1,aud=new Audio();
@@ -45,32 +54,51 @@ async function load(){let q;try{q=JSON.parse(localStorage.q||'null')}catch(e){}
  SU=q;A=[];q.forEach(s=>s.a.forEach(y=>{let t=y.t;if(y.i==1&&s.n!=1&&s.n!=9&&norm(t).startsWith('بسم الله الرحمن الرحيم'))t=t.split(' ').slice(4).join(' ');
   A.push({...y,t,s:s.n,sn:s.name,nn:norm(t),cc:coll(norm(t))})})) }
 // ---- UI ----
-const TABS=[['quran','المصحف'],['kh','الختمات'],['goal','الأهداف'],['ad','الأذكار'],['wird','وردي'],['more','المزيد']];
-function nav(){$('#nav').innerHTML=TABS.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="go('${t[0]}')">${t[1]}</button>`).join('')}
-function go(t,x){tab=t;$('#sh').innerHTML='';nav();applyTheme();V[t](x);scrollTo(0,0)}
+const TABS=[['quran','المصحف','📖'],['kh','الختمات','📿'],['goal','الأهداف','🎯'],['ad','الأذكار','🤲'],['wird','وردي','🌙'],['story','القصص','📜'],['more','التحميل والإعدادات','⚙️']];
+function nav(){$('#ttl').textContent=(TABS.find(t=>t[0]==tab)||[0,'نور'])[1]}
+function menu(){$('#dr').innerHTML=`<div class="ov" onclick="$('#dr').innerHTML=''"></div><div class="dw"><b style="font-size:20px">✦ القائمة ✦</b>${TABS.map(t=>`<div class="li" onclick="go('${t[0]}')"><span>${t[2]}</span><span>${t[1]}</span></div>`).join('')}</div>`}
+function go(t,x){tab=t;$('#sh').innerHTML='';$('#dr').innerHTML='';nav();applyTheme();V[t](x);scrollTo(0,0)}
 const V={};
 const TH={'أخضر':['#fbf8f1','#222','#fff','#e4dccb','#0f5132','#c9a227','#0f5132'],'أزرق ملكي':['#f4f7fb','#1b2430','#fff','#d5deeb','#1e3a6e','#c9a227','#1e3a6e'],'بنّي ذهبي':['#faf3e3','#2b1d10','#fffaf0','#e6d3a8','#7a4b12','#b8860b','#7a4b12'],'بنفسجي':['#f7f3fa','#241a2e','#fff','#e0d3ea','#5b2a86','#c9a227','#5b2a86'],'ليلي':['#121212','#e8e8e8','#1d1d1d','#333','#5fc79a','#d4af37','#0b3d2a']};
 function applyTheme(){const t=TH[St.theme]||TH['أخضر'],r=document.documentElement.style;['--bg','--fg','--card','--b','--c','--g','--h'].forEach((k,i)=>r.setProperty(k,t[i]));$('meta[name=theme-color]').content=t[6]}
 function vod(){const a=A[Math.floor(Date.now()/864e5)%TOTAL];return `<div class="card" onclick="openS(${a.s},${a.i})"><small>آية اليوم</small><div class="ay" style="font-family:'${St.font}'">${esc(a.t)}</div><small>${a.sn} — ${a.i}</small></div>`}
-V.quran=()=>{$('#m').innerHTML=`${vod()}<div class="card"><input id="q" placeholder="ابحث عن آية (يتسامح مع الأخطاء)…" oninput="doSearch(this.value)"></div><div id="res"></div>
+V.quran=()=>{curP=0;$('#m').innerHTML=`${vod()}<div class="card"><input id="q" placeholder="ابحث عن آية (يتسامح مع الأخطاء)…" oninput="doSearch(this.value)"></div><div id="res"></div>
 <div class="row"><button class="b" onclick="idx('s')">السور</button><button class="b" onclick="idx('j')">الأجزاء</button></div><div id="idx"></div>`;idx('s')};
 function doSearch(v){$('#res').innerHTML=search(v).map(a=>`<div class="card" onclick="openS(${a.s},${a.i})"><div class="ay" style="font-family:'${St.font}'">${esc(a.t)}</div><small>${a.sn} — ${a.i}</small></div>`).join('')}
 function idx(k){let h='';if(k=='s')h=SU.map(s=>`<div class="li" onclick="openS(${s.n})"><b>${s.name}</b><small>${s.n} · ${s.a.length} آية · جزء ${s.a[0].j}</small></div>`).join('');
  else for(let j=1;j<=30;j++){const f=A.find(a=>a.j==j),ss=[...new Set(A.filter(a=>a.j==j).map(a=>a.sn))];
   h+=`<div class="li" onclick="openS(${f.s},${f.i})"><b>الجزء ${j}</b><small>${ss.join('، ')}</small></div>`}$('#idx').innerHTML=h}
-function openS(n,at){tab='quran';nav();const s=SU[n-1];$('#m').innerHTML=`<div class="row"><button class="b" onclick="go('quran')">← الفهرس</button><select onchange="St.font=this.value;save();openS(${n})">${['Amiri Quran','Scheherazade New','Noto Naskh Arabic'].map(f=>`<option ${f==St.font?'selected':''}>${f}</option>`).join('')}</select>
-<button class="b" onclick="St.size+=2;save();openS(${n},${at||0})">أ+</button><button class="b" onclick="St.size-=2;save();openS(${n},${at||0})">أ-</button></div>
-<h2 style="text-align:center">${s.name}</h2><div class="card ay mus" style="font-family:'${St.font}';font-size:${St.size}px">${n!=1&&n!=9?'<div style="text-align:center">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':''}${s.a.map(y=>`<span id="a${y.n}" onclick="ayahMenu(${y.n-1})">${esc(y.t.trim())} <b class="n">﴿${y.i}﴾</b></span>`).join(' ')}</div>`;
- if(at){const e=$('#a'+s.a[at-1].n);e&&e.scrollIntoView({block:'center'})}}
+let curP=0,tx=0;
+const ar=n=>Number(n).toLocaleString('ar-EG');
+function openS(n,at){const a=A.find(x=>x.s==n&&x.i==(at||1))||A.find(x=>x.s==n);openP(a.p,a.n)}
+function openP(p,fo){tab='quran';nav();p=Math.min(604,Math.max(1,+p||1));curP=p;const L=A.filter(a=>a.p==p);let h='';
+ for(const y of L){if(y.i==1){h+=`<div class="sb">${SU[y.s-1].name}</div>`+(y.s!=1&&y.s!=9?'<div class="bs">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'')}
+  h+=`<span id="a${y.n}" onclick="ayahMenu(${y.n-1})">${esc(y.t.trim())} <b class="am">${ar(y.i)}</b></span> `}
+ const nb=`<div class="row" style="justify-content:space-between;margin:10px 0"><button class="b" onclick="openP(${p-1})">→ السابقة</button><small>اسحب الصفحة للتقليب</small><button class="b" onclick="openP(${p+1})">التالية ←</button></div>`;
+ $('#m').innerHTML=`<div class="row"><button class="b" onclick="go('quran')">الفهرس</button><select onchange="St.font=this.value;save();openP(${p})">${['Amiri Quran','Scheherazade New','Noto Naskh Arabic'].map(f=>`<option ${f==St.font?'selected':''}>${f}</option>`).join('')}</select><button class="b" onclick="St.size+=2;save();openP(${p})">أ+</button><button class="b" onclick="St.size-=2;save();openP(${p})">أ-</button><input id="gpg" type="number" min="1" max="604" placeholder="صفحة" style="width:80px;margin:0"><button class="b" onclick="openP($('#gpg').value)">اذهب</button></div>
+ <div class="pg" style="font-family:'${St.font}';font-size:${St.size}px;margin-top:8px"><div class="ph"><span>${L[0].sn}</span><span>الجزء ${ar(L[0].j)}</span></div><div class="ay mp">${h}</div><div class="pn">${ar(p)}</div></div>${nb}`;
+ const e=fo&&$('#a'+fo);if(e){e.classList.add('cur');e.scrollIntoView({block:'center'})}else scrollTo(0,0)}
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{if(tab!='quran'||!curP||$('#sh').innerHTML||$('#dr').innerHTML)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>100)openP(curP+(d<0?1:-1))},{passive:true});
+// ---- Stories ----
+let ST=null;
+async function loadSt(){if(ST)return ST;try{ST=await(await fetch('stories.json')).json()}catch(e){ST=[]}return ST}
+V.story=async(f)=>{const S=await loadSt();f=f&&f.c?f:{c:'الكل',q:''};const cats=['الكل',...new Set(S.map(x=>x.c))];
+ const L=S.map((x,i)=>[x,i]).filter(([x])=>(f.c=='الكل'||x.c==f.c)&&norm(x.t+x.b).includes(norm(f.q)));
+ $('#m').innerHTML=`<div class="card"><input id="sq" placeholder="ابحث في القصص…" value="${esc(f.q)}" oninput="V.story({c:'${f.c}',q:this.value})"><div class="row">${cats.map(c=>`<button class="b" style="${c==f.c?'':'opacity:.55'}" onclick="V.story({c:'${c}',q:''})">${c}</button>`).join('')}</div></div>${L.map(([x,i])=>`<div class="li" onclick="showSt(${i})"><b>${esc(x.t)}</b><small>${esc(x.c)}</small></div>`).join('')||'<small>لا نتائج</small>'}<div class="row" style="margin-top:8px"><button class="b" onclick="dlStories()">تحميل كل القصص كملف</button></div><small>ملخصات مبسطة، ويُنصح بمراجعتها مع أهل العلم. القصص محفوظة في التطبيق وتعمل بلا إنترنت.</small>`;
+ const q=$('#sq');if(f.q&&q){q.focus();q.setSelectionRange(f.q.length,f.q.length)}};
+function showSt(i){const x=ST[i];$('#m').innerHTML=`<div class="row"><button class="b" onclick="go('story')">← القصص</button><button class="b" onclick="shareSt(${i})">مشاركة</button><button class="b" onclick="dlStories(${i})">تحميل</button></div><div class="card"><h2 style="color:var(--c)">${esc(x.t)}</h2><div style="line-height:2;font-size:18px">${x.b.split('\n').map(p=>`<p>${esc(p)}</p>`).join('')}</div><small>المصدر: ${esc(x.r)}</small></div>`;scrollTo(0,0)}
+function dlStories(i){const L=i==null?ST:[ST[i]],t=L.map(x=>x.t+'\n\n'+x.b+'\n\nالمصدر: '+x.r).join('\n\n----------\n\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain;charset=utf-8'}));a.download=(i==null?'قصص-نور':L[0].t)+'.txt';a.click()}
+function shareSt(i){const x=ST[i],t=x.t+'\n\n'+x.b+'\n\nالمصدر: '+x.r;navigator.share?navigator.share({text:t}).catch(()=>{}):navigator.clipboard.writeText(t).then(()=>alert('تم النسخ'))}
 function ayahMenu(i){const a=A[i];$('#sh').innerHTML=`<div class="sheet"><b>${a.sn} — آية ${a.i}</b><div class="row" style="margin:8px 0">
 <button class="b" onclick="play(${i})">▶ تشغيل</button><button class="b" onclick="aud.pause()">⏸</button><button class="b" onclick="tafsir(${i})">تفسير</button>
 <button class="b" onclick="bm(${i})">علامة</button><button class="b" onclick="markKh(${i})">وصلت هنا (ختمة)</button><button class="b" onclick="$('#sh').innerHTML=''">✕</button></div>
 <div id="tx"></div></div>`}
 async function lists(){if(St.eds)return;try{const[r,t]=await Promise.all([fetch(API+'/edition?format=audio&language=ar&type=versebyverse').then(x=>x.json()),fetch(API+'/edition?format=text&language=ar&type=tafsir').then(x=>x.json())]);St.eds={rec:r.data.map(e=>[e.identifier,e.name]),taf:t.data.map(e=>[e.identifier,e.name])};save()}catch(e){St.eds={rec:[['ar.alafasy','العفاسي']],taf:[['ar.muyassar','الميسر']]}}}
-function play(i){cur=i;aud.src=`https://cdn.islamic.network/quran/audio/128/${St.rec}/${A[i].n}.mp3`;aud.play();document.querySelectorAll('.cur').forEach(e=>e.classList.remove('cur'));const e=$('#a'+A[i].n);e&&(e.classList.add('cur'),e.scrollIntoView({block:'center'}))}
+function play(i){if(tab=='quran'&&!$('#a'+A[i].n))openP(A[i].p);cur=i;aud.src=`https://cdn.islamic.network/quran/audio/128/${St.rec}/${A[i].n}.mp3`;aud.play();document.querySelectorAll('.cur').forEach(e=>e.classList.remove('cur'));const e=$('#a'+A[i].n);e&&(e.classList.add('cur'),e.scrollIntoView({block:'center'}))}
 aud.onended=()=>{if(cur>=0&&cur<TOTAL-1&&A[cur+1].s==A[cur].s)play(cur+1)};
 async function tafsir(i){await lists();$('#tx').innerHTML=`<select onchange="St.taf=this.value;save();tafsir(${i})">${St.eds.taf.map(e=>`<option value="${e[0]}" ${e[0]==St.taf?'selected':''}>${e[1]}</option>`).join('')}</select><p id="tt">…</p>`;
- try{const r=await(await fetch(`${API}/ayah/${A[i].n}/${St.taf}`)).json();$('#tt').textContent=r.data.text}catch(e){$('#tt').textContent='تعذر الجلب'}}
+ try{const T=await getTaf(St.taf);if(T){$('#tt').textContent=T[i];return}const r=await(await fetch(`${API}/ayah/${A[i].n}/${St.taf}`)).json();$('#tt').textContent=r.data.text}catch(e){$('#tt').textContent='تعذر الجلب'}}
 function bm(i){St.bm.push({n:A[i].n,d:Date.now()});save();$('#tx').innerHTML='تمت إضافة العلامة ✓'}
 // ---- Khatmas ----
 V.kh=()=>{const h=St.kh.map((k,i)=>{const p=Math.round(k.pos/TOTAL*100);return `<div class="card"><div class="row"><b style="flex:1">${esc(k.name)}</b><small>اكتملت ${k.done} مرة</small></div>
@@ -120,11 +148,39 @@ function rs(){const t=prompt('الصق النسخة الاحتياطية');if(t)
 V.more=async()=>{await lists();$('#m').innerHTML=`<div class="card"><b>الإعدادات</b><p>القارئ</p><select onchange="St.rec=this.value;save()">${St.eds.rec.map(e=>`<option value="${e[0]}" ${e[0]==St.rec?'selected':''}>${e[1]}</option>`).join('')}</select>
 <p>شكل التطبيق</p><select onchange="St.theme=this.value;save();go('more')">${Object.keys(TH).map(k=>`<option ${k==St.theme?'selected':''}>${k}</option>`).join('')}</select>
 <p><button class="b" onclick="bk()">نسخة احتياطية</button> <button class="b" onclick="rs()">استرجاع</button></p></div>
-<div class="card"><b>مواقيت الصلاة والقبلة</b><p><button class="b" onclick="prayer()">عرض حسب موقعي</button></p><div id="pr"></div></div>
+<div class="card"><b>مواقيت الصلاة والقبلة</b><p><button class="b" onclick="prayer()">تحديد موقعي وتحميل مواقيت أسبوع</button></p><small>تتحدّث تلقائيًا عند كل اتصال بالإنترنت</small><div id="pr">${prHtml()}</div></div>
+<div class="card"><b>التحميل للاستخدام بدون إنترنت</b><p>التفسير</p>
+<select id="dt">${St.eds.taf.map(e=>`<option value="${e[0]}">${e[1]}</option>`).join('')}</select>
+<div class="row" style="margin-top:6px"><button class="b" onclick="dlTaf($('#dt').value)">تحميل المحدد</button><button class="b" onclick="dlAllTaf()">تحميل كل التفاسير</button></div><small id="dts">${tdTxt()}</small>
+<p>الصوت (بصوت القارئ المختار أعلاه)</p><select id="ds">${SU.map(s=>`<option value="${s.n}">${s.n}. ${s.name}</option>`).join('')}</select>
+<div class="row" style="margin-top:6px"><button class="b" onclick="dlAud(+$('#ds').value)">تحميل السورة</button><button class="b" onclick="dlAud(0)">كل المصحف</button><button class="b" onclick="STOP=1">إيقاف</button><button class="b" onclick="delAud()">حذف الصوت</button></div>
+<div id="dp"></div><small id="sto"></small></div>
 <div class="card"><b>العلامات (${St.bm.length})</b>${St.bm.map(b=>{const a=A[b.n-1];return `<div class="li" onclick="openS(${a.s},${a.i})">${a.sn} — ${a.i}</div>`}).join('')}</div>
-<div class="card"><b>إحصائياتي</b>${wk()}<small>الصفحات في آخر 7 أيام</small>${St.kh.map(k=>`<div>${esc(k.name)}: ${k.done} ختمة + ${Math.round(k.pos/TOTAL*100)}%</div>`).join('')||'<small>لا شيء بعد</small>'}</div>`};
-function prayer(){navigator.geolocation.getCurrentPosition(async p=>{const{latitude:a,longitude:o}=p.coords;try{const[t,q]=await Promise.all([fetch(`https://api.aladhan.com/v1/timings?latitude=${a}&longitude=${o}`).then(r=>r.json()),fetch(`https://api.aladhan.com/v1/qibla/${a}/${o}`).then(r=>r.json())]);const T=t.data.timings;
- $('#pr').innerHTML=[['الفجر','Fajr'],['الظهر','Dhuhr'],['العصر','Asr'],['المغرب','Maghrib'],['العشاء','Isha']].map(x=>`<div class="li"><span>${x[0]}</span><b>${T[x[1]]}</b></div>`).join('')+`<p>اتجاه القبلة: ${Math.round(q.data.direction)}° من الشمال</p>`}catch(e){$('#pr').textContent='تعذر الجلب'}},()=>{$('#pr').textContent='فعّل إذن الموقع'})}
+<div class="card"><b>إحصائياتي</b>${wk()}<small>الصفحات في آخر 7 أيام</small>${St.kh.map(k=>`<div>${esc(k.name)}: ${k.done} ختمة + ${Math.round(k.pos/TOTAL*100)}%</div>`).join('')||'<small>لا شيء بعد</small>'}</div>`;sto()};
+// ---- Offline downloads ----
+let STOP=0,TF={};
+const audUrl=(rec,n)=>`https://cdn.islamic.network/quran/audio/128/${rec}/${n}.mp3`;
+aud.onerror=()=>{const e=$('#tx');if(e)e.textContent='الصوت غير محمّل ولا يوجد إنترنت'};
+async function getTaf(id){if(TF[id])return TF[id];const c=await caches.open('noor-data'),m=await c.match(API+'/quran/'+id);if(!m)return null;const j=await m.json();TF[id]=j.data.surahs.flatMap(s=>s.ayahs.map(y=>y.text));return TF[id]}
+const tdTxt=()=>'تم تحميل: '+(Object.keys(St.tdl).map(k=>(St.eds.taf.find(e=>e[0]==k)||[0,k])[1]).join('، ')||'لا شيء');
+async function dlTaf(id){const s=$('#dts'),nm=(St.eds.taf.find(e=>e[0]==id)||[0,id])[1];s.textContent='جارٍ تحميل '+nm+'…';try{const r=await fetch(API+'/quran/'+id);if(!r.ok)throw 0;const c=await caches.open('noor-data');await c.put(API+'/quran/'+id,r);St.tdl[id]=1;save();delete TF[id];s.textContent=tdTxt();sto()}catch(e){s.textContent='تعذر تحميل '+nm+'، تأكد من الإنترنت'}}
+async function dlAllTaf(){for(const e of St.eds.taf)if(!St.tdl[e[0]])await dlTaf(e[0])}
+async function dlAud(sn){STOP=0;if(!sn&&!confirm('تحميل المصحف كاملًا يحتاج مساحة كبيرة (مئات الميغابايت) ووقتًا طويلًا. متابعة؟'))return;
+ navigator.storage&&navigator.storage.persist&&navigator.storage.persist();
+ const c=await caches.open('noor-data'),L=sn?A.filter(a=>a.s==sn):A,rec=St.rec;let d=0,f=0,i=0;
+ const w=async()=>{while(i<L.length&&!STOP){const a=L[i++],u=audUrl(rec,a.n);try{if(!await c.match(u)){let r;try{r=await fetch(u)}catch(e){r=await fetch(u,{mode:'no-cors'})}if(r.ok||r.type=='opaque')await c.put(u,r);else f++}}catch(e){f++}d++;if(d%5==0||d==L.length){const e=$('#dp');if(e)e.textContent=`${d}/${L.length}${f?' (فشل '+f+')':''}`}}};
+ await Promise.all([w(),w(),w(),w()]);const e=$('#dp');if(e)e.textContent=STOP?'تم الإيقاف':f?`اكتمل مع ${f} فشل`:'اكتمل التحميل ✓';sto()}
+async function delAud(){if(!confirm('حذف كل الصوت المحمّل؟'))return;const c=await caches.open('noor-data');for(const k of await c.keys())if(k.url.includes('islamic.network'))await c.delete(k);sto()}
+async function sto(){const e=$('#sto');if(e&&navigator.storage&&navigator.storage.estimate){const x=await navigator.storage.estimate();e.textContent='المساحة المستخدمة: '+Math.round(x.usage/1048576)+' ميغابايت'}}
+// ---- Prayer times (7 days, auto refresh) ----
+const fmt=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+async function refreshPT(){const P=St.pt;if(!P||!P.lat||!navigator.onLine)return;const days={};
+ try{for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()+i);const k=fmt(d),[y,m,dd]=k.split('-');const r=await(await fetch(`https://api.aladhan.com/v1/timings/${dd}-${m}-${y}?latitude=${P.lat}&longitude=${P.lon}`)).json();const T={};['Fajr','Dhuhr','Asr','Maghrib','Isha'].forEach(n=>T[n]=r.data.timings[n].split(' ')[0]);days[k]=T}
+ St.pt={...St.pt,days,upd:Date.now()};save();const e=$('#pr');if(e&&tab=='more')e.innerHTML=prHtml()}catch(e){}}
+function prHtml(){const P=St.pt;if(!P||!P.days)return '';const td=fmt(new Date()),ks=Object.keys(P.days).filter(k=>k>=td).sort(),N={Fajr:'الفجر',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};
+ return `<small>آخر تحديث: ${new Date(P.upd||0).toLocaleString('ar')}${navigator.onLine?'':' (بدون إنترنت)'}</small>`+ks.map(k=>`<div class="card" style="${k==td?'border:2px solid var(--c)':''}"><b>${k==td?'اليوم':new Date(k+'T12:00').toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'short'})}</b><div class="row" style="justify-content:space-between">${Object.keys(N).map(n=>`<span><small>${N[n]}</small><br>${P.days[k][n]}</span>`).join('')}</div></div>`).join('')+(P.q!=null?`<p>اتجاه القبلة: ${Math.round(P.q)}° من الشمال</p>`:'')}
+function prayer(){navigator.geolocation.getCurrentPosition(async p=>{St.pt={lat:p.coords.latitude,lon:p.coords.longitude,days:{}};try{const q=await(await fetch(`https://api.aladhan.com/v1/qibla/${St.pt.lat}/${St.pt.lon}`)).json();St.pt.q=q.data.direction}catch(e){}save();await refreshPT();$('#pr').innerHTML=prHtml()},()=>{$('#pr').textContent='فعّل إذن الموقع'})}
+addEventListener('online',refreshPT);
 // ---- start ----
-(async()=>{nav();try{await load();go('quran');remind();setInterval(remind,6e4)}catch(e){$('#m').innerHTML='تعذر تحميل المصحف. تأكد من الاتصال بالإنترنت ثم أعد فتح الصفحة.'}})();
+(async()=>{nav();try{await load();go('quran');remind();setInterval(remind,6e4);refreshPT()}catch(e){$('#m').innerHTML='تعذر تحميل المصحف. تأكد من الاتصال بالإنترنت ثم أعد فتح الصفحة.'}})();
 </script></body></html>
