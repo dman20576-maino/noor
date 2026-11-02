@@ -1,4 +1,4 @@
-const V='noor-v3',SHELL=['./','index.html','stories.json','manifest.json','icon-192.png','icon-512.png'];
+const V='noor-v6',SHELL=['./','index.html','stories.json','names.json','prophets.json','manifest.json','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x.startsWith('noor-v')&&x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 async function audio(r){const m=await caches.match(r.url);if(!m)return fetch(r);const rg=r.headers.get('range');if(!rg||m.type==='opaque')return m;const b=await m.blob(),x=/bytes=(\d+)-(\d*)/.exec(rg);if(!x)return m;const s=+x[1],e=x[2]?Math.min(+x[2],b.size-1):b.size-1;return new Response(b.slice(s,e+1),{status:206,headers:{'Content-Type':'audio/mpeg','Content-Range':`bytes ${s}-${e}/${b.size}`,'Content-Length':String(e-s+1)}})}
