@@ -37,6 +37,10 @@ button.b{background:var(--c);color:var(--bt,#fff);border-radius:12px;padding:10p
 .pf{display:flex;align-items:center;border-top:1px solid var(--g);padding-top:4px;font-size:13px;color:var(--c)}.pf>*{flex:1;text-align:center}.pf>:first-child{text-align:right}.pf>:last-child{text-align:left}
 .gold{color:#c9a227;font-weight:bold;text-shadow:0 0 8px #ffd700;display:inline-block}.flash{animation:fl 1.1s ease-in-out 3}@keyframes fl{50%{text-shadow:0 0 20px #ffd700,0 0 34px #ffb300;transform:scale(1.35)}}
 .ts{position:fixed;top:78px;left:50%;transform:translateX(-50%);background:#c9a227;color:#000;padding:8px 18px;border-radius:22px;z-index:15;animation:fo 2.4s forwards;white-space:nowrap}@keyframes fo{0%{opacity:0;top:60px}15%,80%{opacity:1;top:78px}100%{opacity:0}}
+.mp{display:flex;flex-direction:column;line-height:1;overflow:hidden;text-align:initial}.mp.ct{justify-content:center}
+.ln{flex:0 0 calc(100%/15);display:flex;justify-content:space-between;align-items:center;white-space:nowrap;gap:.2em;overflow:hidden}.ln>*{flex:none}.ln.sh{justify-content:center;gap:.5em}.ln.b,.ln.h{justify-content:center}
+.ln .sb{margin:0;padding:0 1.2em;font-size:.78em;line-height:1.6;border:2px solid var(--g);border-radius:10px;background:linear-gradient(90deg,transparent,#c9a22733,transparent);color:var(--c);white-space:nowrap}
+.w{cursor:pointer}.w.cur,.am.cur{background:#ffe08a66;border-radius:4px}
 </style></head><body>
 <header id="t"><button id="mb" onclick="menu()">☰ القائمة</button><span id="ttl">❖ نور ❖</span><small id="sub" style="display:block;font-size:12px;opacity:.85"></small></header><div id="ban"></div><main id="m">جارٍ التحميل…</main><div id="sh"></div>
 <div id="dr"></div>
@@ -56,22 +60,22 @@ function search(q){const qn=norm(q),qc=coll(qn),w=qc.split(' ').filter(Boolean);
  else{const k=w.filter(x=>a.cc.includes(x)).length/w.length;if(k>=.6)s=k}
  if(s)r.push([s,a])}return r.sort((x,y)=>y[0]-x[0]).slice(0,60).map(x=>x[1])}
 // ---- load Quran ----
-async function load(){let q;try{q=JSON.parse(localStorage.q||'null')}catch(e){}
- if(!q){const r=await fetch(API+'/quran/quran-uthmani');q=(await r.json()).data.surahs.map(s=>({n:s.number,name:s.name,a:s.ayahs.map(y=>({n:y.number,t:y.text,i:y.numberInSurah,j:y.juz,p:y.page}))}));
-  try{localStorage.q=JSON.stringify(q)}catch(e){}}
+async function load(){let q;try{q=JSON.parse(localStorage.q2||'null')}catch(e){}
+ if(!q){const r=await fetch(API+'/quran/quran-uthmani');q=(await r.json()).data.surahs.map(s=>({n:s.number,name:s.name,rt:s.revelationType,a:s.ayahs.map(y=>({n:y.number,t:y.text,i:y.numberInSurah,j:y.juz,p:y.page}))}));
+  try{localStorage.q2=JSON.stringify(q);localStorage.removeItem('q')}catch(e){}}
  SU=q;A=[];q.forEach(s=>s.a.forEach(y=>{let t=y.t;if(y.i==1&&s.n!=1&&s.n!=9&&norm(t).startsWith('بسم الله الرحمن الرحيم'))t=t.split(' ').slice(4).join(' ');
   A.push({...y,t,s:s.n,sn:s.name,nn:norm(t),cc:coll(norm(t))})})) }
 // ---- UI ----
 const TABS=[['quran','المصحف','📖'],['kh','الختمات','📿'],['goal','الأهداف','🎯'],['ad','الأذكار','🤲'],['wird','وردي','🌙'],['story','القصص','📜'],['prophets','الأنبياء','🕋'],['names','أسماء الله الحسنى','🕌'],['miracles','تأملات في القرآن','✨'],['more','التحميل والإعدادات','⚙️']];
 function nav(){$('#sub').textContent=(TABS.find(t=>t[0]==tab)||[0,'نور'])[1]}
 function menu(){$('#dr').innerHTML=`<div class="ov" onclick="$('#dr').innerHTML=''"></div><div class="dw"><b style="font-size:20px">✦ القائمة ✦</b>${TABS.map(t=>`<div class="li" onclick="go('${t[0]}')"><span>${t[2]}</span><span>${t[1]}</span></div>`).join('')}</div>`}
-function go(t,x){tab=t;$('#sh').innerHTML='';$('#dr').innerHTML='';nav();applyTheme();V[t](x);scrollTo(0,0)}
+function go(t,x){tab=t;if(t!='quran'&&WL){WL.release();WL=null}$('#sh').innerHTML='';$('#dr').innerHTML='';nav();applyTheme();V[t](x);scrollTo(0,0)}
 const V={};
 const TH={'أسود وأبيض':['#f5f3ee','#1a1a1a','#ffffff','#d9d5cb','#111111','#9a9a9a','#000000','#ffffff','#ffffff'],'أسود وذهبي':['#f7f3e8','#1a1a1a','#fffdf7','#e3d6b0','#1a1a1a','#c9a227','#000000','#e8c55a','#e8c55a'],'زمردي':['#f1f7f3','#16241c','#ffffff','#cfe3d6','#0f5132','#c9a227','#0a3d27','#ffffff','#ffffff'],'أزرق ليلي':['#0f1626','#e6e9f2','#182036','#2b3556','#6ea8ff','#d4af37','#0a1020','#e6e9f2','#0a1020']};
 function applyTheme(){if(!TH[St.theme])St.theme=Object.keys(TH)[0];const t=TH[St.theme],r=document.documentElement.style;['--bg','--fg','--card','--b','--c','--g','--h','--tc','--bt'].forEach((k,i)=>r.setProperty(k,t[i]));$('meta[name=theme-color]').content=t[6]}
 let NM=[];async function loadNm(){try{NM=await(await fetch('names.json')).json()}catch(e){NM=[]}}
 function vod(){const a=A[Math.floor(Date.now()/864e5)%TOTAL],k=Math.floor(Date.now()/864e5)%99,n=NM[k];return `<div class="card" onclick="openS(${a.s},${a.i})"><small>آية اليوم</small><div class="ay" style="font-family:'${St.font}'">${esc(a.t)}</div><small>${a.sn} — ${a.i}</small></div>`+(n?`<div class="card" onclick="go('names',${k})"><small>اسم الله اليوم</small><div style="font-family:'Amiri Quran';font-size:30px;color:var(--c)">${n.n}</div><div>${n.m}</div><div style="color:var(--c)">${n.j||''}</div></div>`:'')}
-V.quran=()=>{curP=0;inK=-1;$('#m').innerHTML=`${vod()}<div class="card"><input id="q" placeholder="ابحث عن آية (يتسامح مع الأخطاء)…" oninput="doSearch(this.value)"></div><div id="res"></div>
+V.quran=()=>{curP=0;inK=-1;$('#m').innerHTML=`${vod()}${mk()}<div class="card"><input id="q" placeholder="ابحث عن آية (يتسامح مع الأخطاء)…" oninput="doSearch(this.value)"></div><div id="res"></div>
 <div class="row"><button class="b" onclick="idx('s')">السور</button><button class="b" onclick="idx('j')">الأجزاء</button></div><div id="idx"></div>`;idx('s')};
 function doSearch(v){$('#res').innerHTML=search(v).map(a=>`<div class="card" onclick="openS(${a.s},${a.i})"><div class="ay" style="font-family:'${St.font}'">${esc(a.t)}</div><small>${a.sn} — ${a.i}</small></div>`).join('')}
 function idx(k){let h='';if(k=='s')h=SU.map(s=>`<div class="li" onclick="openS(${s.n})"><b>${s.name}</b><small>${s.n} · ${s.a.length} آية · جزء ${s.a[0].j}</small></div>`).join('');
@@ -85,18 +89,42 @@ const BL=['بارك الله فيك','جزاك الله خيرًا','ثبّتك 
 function toast(t){const d=document.createElement('div');d.className='ts';d.textContent='✦ '+t+' ✦';document.body.appendChild(d);setTimeout(()=>d.remove(),2400)}
 function todayPct(){const g=St.goals.find(x=>x.p=='day'&&x.u=='p');return g?Math.min(100,Math.round(prog(g)/g.t*100)):null}
 function advKh(p){const k=St.kh[inK];if(!k)return;const la=A.filter(a=>a.p==p-1).pop();if(la&&la.n>k.pos){addL('a',la.n-k.pos);addL('p',(p-1)-(k.pos?A[k.pos-1].p:0));k.pos=la.n;save()}}
-function fit(){const b=$('#pg'),m=$('#mp');if(!b||!m)return;b.style.height=Math.max(320,innerHeight-b.getBoundingClientRect().top-10)+'px';let lo=9,hi=30;while(hi-lo>.5){const mid=(lo+hi)/2;m.style.fontSize=mid+'px';if(m.scrollHeight>m.clientHeight+1)hi=mid;else lo=mid}m.style.fontSize=lo+'px'}
+let WL=null;
+function mk(){return St.mark?`<div class="card" onclick="openP(${St.mark.p})">🔖 متابعة من الفاصلة: صفحة ${ar(St.mark.p)}</div>`:''}
+function setMark(){St.mark={p:curP};save();toast('تم وضع الفاصلة')}
+function shareAy(i){const a=A[i],t='﴿'+a.t+'﴾\n['+a.sn+': '+a.i+']';navigator.share?navigator.share({text:t}).catch(()=>{}):navigator.clipboard.writeText(t).then(()=>alert('تم النسخ'))}
+function surInfo(n){const s=SU[n-1];$('#sh').innerHTML=`<div class="sheet"><b>${s.name}</b><p>ترتيبها: ${ar(n)} · عدد آياتها: ${ar(s.a.length)}<br>${s.rt=='Meccan'?'مكية':s.rt=='Medinan'?'مدنية':''}${s.rt?' · ':''}تبدأ في الجزء ${ar(s.a[0].j)} الصفحة ${ar(s.a[0].p)}</p><button class="b" onclick="$('#sh').innerHTML=''">إغلاق</button></div>`}
+const BSM='بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
+function mkRows(p){const L=A.filter(a=>a.p==p),it=[];
+ for(const y of L){if(y.i==1){it.push({k:'h',s:y.s});if(y.s!=1&&y.s!=9)it.push({k:'b'})}
+  y.t.trim().split(/\s+/).forEach((t,j)=>it.push({k:'w',t,n:y.n,f:!j,w:norm(t).length+.8}));it.push({k:'w',t:ar(y.i),n:y.n,m:1,w:2.6})}
+ const tot=p==1?7:15,segs=[];let c=null;
+ for(const x of it){if(x.k=='w'){if(!c){c=[];segs.push(c)}c.push(x)}else{c=null;segs.push(x)}}
+ const ws=segs.filter(Array.isArray),W=ws.map(q=>q.reduce((a,x)=>a+x.w,0)),T=W.reduce((a,b)=>a+b,0)||1,avail=Math.max(1,tot-(segs.length-ws.length));
+ const al=W.map(w=>Math.max(1,Math.round(w/T*avail)));let g=0;
+ while(al.reduce((a,b)=>a+b,0)!=avail&&g++<80){const sum=al.reduce((a,b)=>a+b,0);
+  if(sum>avail){const k=al.map((v,i)=>v>1?W[i]/v:Infinity),m=Math.min(...k);if(m==Infinity)break;al[k.indexOf(m)]--}
+  else{const k=W.map((w,i)=>w/al[i]);al[k.indexOf(Math.max(...k))]++}}
+ const rows=[];let wi=0;
+ for(const sg of segs){
+  if(!Array.isArray(sg)){rows.push(sg.k=='h'?`<div class="ln h"><div class="sb" onclick="surInfo(${sg.s})">${SU[sg.s-1].name}</div></div>`:`<div class="ln b">${BSM}</div>`);continue}
+  const n=al[wi],tg=W[wi++]/n,ls=Array.from({length:n},()=>[]);let cum=0,last=0;
+  for(const x of sg){const li=x.m?last:Math.max(last,Math.min(n-1,Math.floor((cum+x.w/2)/tg)));cum+=x.w;last=li;ls[li].push(x)}
+  for(const l of ls){const lw=l.reduce((a,x)=>a+x.w,0);
+   rows.push(`<div class="ln${lw<tg*.6?' sh':''}">${l.map(x=>x.m?`<b class="am" data-a="${x.n}" onclick="ayahMenu(${x.n-1})">${x.t}</b>`:`<span class="w" data-a="${x.n}"${x.f?` id="a${x.n}"`:''} onclick="ayahMenu(${x.n-1})">${esc(x.t)}</span>`).join('')}</div>`)}}
+ return rows.join('')}
+function fit(){const b=$('#pg'),m=$('#mp');if(!b||!m)return;b.style.height=Math.max(380,innerHeight-b.getBoundingClientRect().top-10)+'px';const rh=m.clientHeight/15;let lo=8,hi=40;
+ while(hi-lo>.4){const mid=(lo+hi)/2;m.style.fontSize=mid+'px';const ov=[...m.children].some(r=>r.scrollWidth>r.clientWidth+1);if(ov||mid*1.75>rh)hi=mid;else lo=mid}m.style.fontSize=lo+'px'}
 addEventListener('resize',()=>{if(curP)fit()});
 function openP(p,fo){tab='quran';nav();p=Math.min(604,Math.max(1,+p||1));const fwd=prevP&&p==prevP+1;if(fwd&&inK>=0)advKh(p);curP=p;prevP=p;
- const L=A.filter(a=>a.p==p);let h='';
- for(const y of L){if(y.i==1){h+=`<div class="sb">${SU[y.s-1].name}</div>`+(y.s!=1&&y.s!=9?'<div class="bs">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'')}
-  h+=`<span id="a${y.n}" onclick="ayahMenu(${y.n-1})">${esc(y.t.trim())} <b class="am">${ar(y.i)}</b></span> `}
- const pc=todayPct(),kn=inK>=0&&St.kh[inK]?esc(St.kh[inK].name):'';
- $('#m').innerHTML=`<div class="row" style="gap:6px;flex-wrap:nowrap;overflow-x:auto"><button class="b" onclick="go('quran')">الفهرس</button><select onchange="St.font=this.value;save();openP(${p})">${['Amiri Quran','Scheherazade New','Noto Naskh Arabic'].map(f=>`<option ${f==St.font?'selected':''}>${f}</option>`).join('')}</select><input id="gpg" type="number" min="1" max="604" placeholder="صفحة" style="width:70px;margin:0"><button class="b" onclick="openP($('#gpg').value)">اذهب</button><button class="b" onclick="openP(${p-1})">السابقة</button><button class="b" onclick="openP(${p+1})">التالية</button></div>
- <div class="pg" id="pg" style="margin-top:8px"><div class="ph"><span>${L[0].sn}</span><span>الجزء ${ar(L[0].j)}</span></div><div class="ay mp${p<3?' c':''}" id="mp" style="font-family:'${St.font}'">${h}</div><div class="pf"><span>${kn}</span><b>${ar(p)}</b><span>${pc==null?'':`<span class="${pc>=100?'gold'+(fwd?' flash':''):''}">اليوم ${ar(pc)}٪</span>`}</span></div></div>`;
+ const L=A.filter(a=>a.p==p),pc=todayPct(),kn=inK>=0&&St.kh[inK]?esc(St.kh[inK].name):'';
+ $('#m').innerHTML=`<div class="row" style="gap:6px;flex-wrap:nowrap;overflow-x:auto"><button class="b" onclick="go('quran')">الفهرس</button><button class="b" onclick="setMark()">🔖</button><select onchange="St.font=this.value;save();openP(${p})">${['Amiri Quran','Scheherazade New','Noto Naskh Arabic'].map(f=>`<option ${f==St.font?'selected':''}>${f}</option>`).join('')}</select><input id="gpg" type="number" min="1" max="604" placeholder="صفحة" style="width:70px;margin:0"><button class="b" onclick="openP($('#gpg').value)">اذهب</button><button class="b" onclick="openP(${p-1})">السابقة</button><button class="b" onclick="openP(${p+1})">التالية</button></div>
+ <div class="pg" id="pg" style="margin-top:8px"><div class="ph"><span>${L[0].sn}</span><span>الجزء ${ar(L[0].j)}</span></div><div class="mp${p==1?' ct':''}" id="mp" style="font-family:'${St.font}'">${mkRows(p)}</div><div class="pf"><span>${kn}</span><b>${ar(p)}</b><span>${pc==null?'':`<span class="${pc>=100?'gold'+(fwd?' flash':''):''}">اليوم ${ar(pc)}٪</span>`}</span></div></div>`;
  fit();document.fonts&&document.fonts.ready.then(fit);
+ if(navigator.wakeLock&&!WL)navigator.wakeLock.request('screen').then(l=>{WL=l;l.onrelease=()=>{WL=null}}).catch(()=>{});
  if(fwd)toast(BL[Math.floor(Math.random()*BL.length)]);
- const e=fo&&$('#a'+fo);if(e){e.classList.add('cur');e.scrollIntoView({block:'center'})}else scrollTo(0,0)}
+ if(fo)document.querySelectorAll('[data-a="'+fo+'"]').forEach(e=>e.classList.add('cur'));
+ const e=fo&&$('#a'+fo);if(e)e.scrollIntoView({block:'center'});else scrollTo(0,0)}
 document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
 document.addEventListener('touchend',e=>{if(tab!='quran'||!curP||$('#sh').innerHTML||$('#dr').innerHTML)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>100)openP(curP+(d<0?1:-1))},{passive:true});
 // ---- Names of Allah ----
@@ -130,10 +158,10 @@ function dlStories(i){const L=i==null?ST:[ST[i]],t=L.map(x=>x.t+'\n\n'+x.b+'\n\n
 function shareSt(i){const x=ST[i],t=x.t+'\n\n'+x.b+'\n\nالمصدر: '+x.r;navigator.share?navigator.share({text:t}).catch(()=>{}):navigator.clipboard.writeText(t).then(()=>alert('تم النسخ'))}
 function ayahMenu(i){const a=A[i];$('#sh').innerHTML=`<div class="sheet"><b>${a.sn} — آية ${a.i}</b><div class="row" style="margin:8px 0">
 <button class="b" onclick="play(${i})">▶ تشغيل</button><button class="b" onclick="aud.pause()">⏸</button><button class="b" onclick="tafsir(${i})">تفسير</button>
-<button class="b" onclick="bm(${i})">علامة</button><button class="b" onclick="markKh(${i})">وصلت هنا (ختمة)</button><button class="b" onclick="$('#sh').innerHTML=''">✕</button></div>
+<button class="b" onclick="bm(${i})">علامة</button><button class="b" onclick="markKh(${i})">وصلت هنا (ختمة)</button><button class="b" onclick="shareAy(${i})">مشاركة</button><button class="b" onclick="$('#sh').innerHTML=''">✕</button></div>
 <div id="tx"></div></div>`}
 async function lists(){if(St.eds)return;try{const[r,t]=await Promise.all([fetch(API+'/edition?format=audio&language=ar&type=versebyverse').then(x=>x.json()),fetch(API+'/edition?format=text&language=ar&type=tafsir').then(x=>x.json())]);St.eds={rec:r.data.map(e=>[e.identifier,e.name]),taf:t.data.map(e=>[e.identifier,e.name])};save()}catch(e){St.eds={rec:[['ar.alafasy','العفاسي']],taf:[['ar.muyassar','الميسر']]}}}
-function play(i){if(tab=='quran'&&!$('#a'+A[i].n))openP(A[i].p);cur=i;aud.src=`https://cdn.islamic.network/quran/audio/128/${St.rec}/${A[i].n}.mp3`;aud.play();document.querySelectorAll('.cur').forEach(e=>e.classList.remove('cur'));const e=$('#a'+A[i].n);e&&(e.classList.add('cur'),e.scrollIntoView({block:'center'}))}
+function play(i){if(tab=='quran'&&!$('#a'+A[i].n))openP(A[i].p);cur=i;aud.src=`https://cdn.islamic.network/quran/audio/128/${St.rec}/${A[i].n}.mp3`;aud.play();document.querySelectorAll('.cur').forEach(e=>e.classList.remove('cur'));document.querySelectorAll('[data-a="'+A[i].n+'"]').forEach(e=>e.classList.add('cur'))}
 aud.onended=()=>{if(cur>=0&&cur<TOTAL-1&&A[cur+1].s==A[cur].s)play(cur+1)};
 async function tafsir(i){await lists();$('#tx').innerHTML=`<select onchange="St.taf=this.value;save();tafsir(${i})">${St.eds.taf.map(e=>`<option value="${e[0]}" ${e[0]==St.taf?'selected':''}>${e[1]}</option>`).join('')}</select><p id="tt">…</p>`;
  try{const T=await getTaf(St.taf);if(T){$('#tt').textContent=T[i];return}const r=await(await fetch(`${API}/ayah/${A[i].n}/${St.taf}`)).json();$('#tt').textContent=r.data.text}catch(e){$('#tt').textContent='تعذر الجلب'}}
